@@ -1,0 +1,76 @@
+yum -y install epel-release
+
+yum -y update -y
+
+java -version
+
+dnf install java-14-openjdk-devel
+
+java -version
+
+useradd -r tomcat
+
+mkdir /usr/local/tomcat9
+
+cd /usr/local/tomcat9
+
+ yum install wget -y
+
+ wget http://www-us.apache.org/dist/tomcat/tomcat-9/v9.0.37/bin/apache-tomcat-9.0.37.tar.gz
+
+ tar -xvf apache-tomcat-9.0.37.tar.gz
+
+ chown -R tomcat:tomcat /usr/local/tomcat9
+
+mv apache-tomcat-9.0.37/* /usr/local/tomcat9/
+
+ll
+
+echo "export CATALINA_HOME="/usr/local/tomcat9"" >> ~/.bashrc
+
+source ~/.bashrc
+
+touch /etc/systemd/system/tomcat.service
+
+vi /etc/systemd/system/tomcat.service
+
+Cetear lo siguiente en el archivo tomcat.service:
+--------------- 
+[Unit]
+Description=Apache Tomcat Server
+After=syslog.target network.target
+
+[Service]
+Type=forking
+User=tomcat
+Group=tomcat
+
+Environment=CATALINA_PID=/usr/local/tomcat9/temp/tomcat.pid
+Environment=CATALINA_HOME=/usr/local/tomcat9
+Environment=CATALINA_BASE=/usr/local/tomcat9
+
+ExecStart=/usr/local/tomcat9/bin/catalina.sh start
+ExecStop=/usr/local/tomcat9/bin/catalina.sh stop
+
+RestartSec=10
+Restart=always
+[Install]
+WantedBy=multi-user.target
+
+--------------------------------
+luego 
+
+systemctl daemon-reload
+
+iniciar y habilitar tomcat.
+
+systemctl start tomcat.service
+systemctl enable tomcat.service
+
+
+curl localhost:8080
+
+
+
+
+
